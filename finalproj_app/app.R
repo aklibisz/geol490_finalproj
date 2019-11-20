@@ -15,15 +15,24 @@ ui <- fluidPage(
                   ".csv")
       ),
       
-      numericInput("g1", "Guess 1", 0, min = 0, max = 10000),
-      numericInput("g2", "Guess 2", 0, min = 0, max = 10000),
-      numericInput("g3", "Guess 3", 0, min = 0, max = 10000),
+      tags$hr(),
+   
+      p("Numeric Guesses for Nonlinear Function Solution"),
+          
+            splitLayout(
+              numericInput("g1", " ", 0, min = 0, max = 10000),
+              numericInput("g2", " ", 0, min = 0, max = 10000),
+              numericInput("g3", " ", 0, min = 0, max = 10000)
+            ),
+      
+      tags$hr(),
+      
       
       actionButton("go", " ",
                    icon = icon("power-off"))
     ),
     mainPanel(
-      tableOutput("contents")
+      plotOutput(" ")
     )
   )
 )
@@ -31,4 +40,4 @@ ui <- fluidPage(
 server <- function(input, output) {
 }
 
-shinyApp(ui, server)
+shinyApp(ui = ui, server = server)
