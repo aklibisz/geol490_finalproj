@@ -3,11 +3,14 @@
 ####
 
 library(shiny)
+# Reticulte is a package that enables python code in an R script
+library(reticulate)
 
-# Define UI for application that draws a histogram
 ui <- fluidPage(
   sidebarLayout(
     sidebarPanel(
+      
+      # Allows user to browse for a CSV file from their local machine
       fileInput("file1", "Choose CSV File",
                 accept = c(
                   "text/csv",
@@ -15,15 +18,20 @@ ui <- fluidPage(
                   ".csv")
       ),
       
+      # Horizontal line for aesthetics and flow
       tags$hr(),
    
       p("Numeric Guesses for Nonlinear Function Solution"),
-          
-            splitLayout(
-              numericInput("g1", " ", 0, min = 0, max = 10000),
-              numericInput("g2", " ", 0, min = 0, max = 10000),
-              numericInput("g3", " ", 0, min = 0, max = 10000)
-            ),
+      
+      # Split layout allows all the numeric inputs on one row    
+      splitLayout(
+              #### Numeric inputs will fed to python code to 
+              # serve as guesses for a nonlinear function to 
+              #### create a trendline
+              numericInput("g1", " ", 0),
+              numericInput("g2", " ", 0),
+              numericInput("g3", " ", 0)
+      ),
       
       tags$hr(),
       
