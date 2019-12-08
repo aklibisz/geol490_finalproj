@@ -52,19 +52,14 @@ ui <- fluidPage(
                    icon = icon("power-off"))
     ),
     mainPanel(
-      plotOutput("df_plot")
+      tableOutput(" ")
     )
   )
 )
 
 server <- function(input, output) {
   
-  df <- read.csv(input$file1$datapath)
-  
 
-  output$df_plot <- eventReactive(input$go, {
-    renderTable(df)
-  }) 
 
 }
 
