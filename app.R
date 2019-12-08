@@ -3,6 +3,7 @@
 ####
 
 library(shiny)
+library(ggplot2)
 
 
 ui <- fluidPage(
@@ -51,12 +52,20 @@ ui <- fluidPage(
                    icon = icon("power-off"))
     ),
     mainPanel(
-      plotOutput(" ")
+      plotOutput("df_plot")
     )
   )
 )
 
 server <- function(input, output) {
+  
+  df <- read.csv(input$file1$datapath)
+  
+
+  output$df_plot <- eventReactive(input$go, {
+    renderTable(df)
+  }) 
+
 }
 
 shinyApp(ui = ui, server = server)
