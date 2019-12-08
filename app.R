@@ -3,8 +3,7 @@
 ####
 
 library(shiny)
-# Reticulte is a package that enables python code in an R script
-library(reticulate)
+
 
 ui <- fluidPage(
   sidebarLayout(
@@ -25,7 +24,7 @@ ui <- fluidPage(
       
       # Split layout allows all the numeric inputs on one row    
       splitLayout(
-              #### Numeric inputs will fed to python code to 
+              #### Numeric inputs will be fed to python code to 
               # serve as guesses for a nonlinear function to 
               #### create a trendline
               numericInput("g1", " ", 0),
