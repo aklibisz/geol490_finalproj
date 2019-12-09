@@ -15,10 +15,7 @@ ui <- fluidPage(
                            accept=c('text/csv', 
                                     'text/comma-separated-values,text/plain', 
                                     '.csv')),
-                 
-                 # added interface for uploading data from
-                 # http://shiny.rstudio.com/gallery/file-upload.html
-                 tags$br(),
+
                  checkboxInput('header', 'Header', TRUE),
                  radioButtons('sep', 'Separator',
                               c(Comma=',',
@@ -29,7 +26,12 @@ ui <- fluidPage(
                               c(None='',
                                 'Double Quote'='"',
                                 'Single Quote'="'"),
-                              '"')
+                              '"'),
+                 
+                 radioButtons("disp", "Display",
+                              choices = c(Head = "head",
+                                          All = "all"),
+                              selected = "head")
                  
                ),
                mainPanel(
@@ -81,7 +83,12 @@ server <- shinyServer(function(input, output, session) {
     updateSelectInput(session, inputId = 'ycol', label = 'Y Variable',
                       choices = names(df), selected = names(df)[2])
     
-    return(df)
+    if(input$disp == "head") {
+      return(head(df))
+    }
+    else {
+      return(df)
+    }
   })
   
   output$contents <- renderTable({
