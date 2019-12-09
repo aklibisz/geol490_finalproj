@@ -44,9 +44,20 @@ ui <- fluidPage(
                headerPanel(' '),
                sidebarPanel(
                  
+                 p("Numeric Guesses for Nonlinear Function Solution"),
+                 
+                 splitLayout(
+                   #### Numeric inputs will be fed to python code to help solve nonlinear functions
+                   numericInput("num1", " ", 0),
+                   numericInput("num2", " ", 0),
+                   numericInput("num3", " ", 0)
+                 ),
+                 
+                 tags$hr(),
+                 
                  # "Empty inputs" - they will be updated after the data is uploaded
                  selectInput('xcol', 'X Variable', ""),
-                 selectInput('ycol', 'Y Variable', "", selected = "")
+                 selectInput('ycol', 'Y Variable', "", selected = ""),
                  
                ),
                mainPanel(
