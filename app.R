@@ -1,127 +1,108 @@
-####
-# Adam Klibisz Geol 490 Final Proj
-####
-
 library(shiny)
-library(ggplot2)
+library(datasets)
 
-
-ui <- fluidPage(
-  
-  #title for whole page
-  titlePanel("Microbial Decay Analysis"),
-  
-  #area of app for user inputs
-  sidebarLayout(
-    
-    sidebarPanel(
-      
-      # Allows user to browse for a CSV file from their local machine
-      fileInput("file1", "Choose CSV File",
-                multiple = FALSE,
-                accept = c( "text/csv",
-                  "text/comma-separated-values,text/plain",
-                  ".csv")),
-      
-      # user inputs whether the file includes headers such as column names
-      checkboxInput("header", "Headers?", TRUE),
-   
-      # user inputs what character distinguishes data beginning and end
-      radioButtons("sep", "Separator",
-                   choices = c(Comma = ",",
-                               Semicolon = ";",
-                               Tab = "\t"),
-                   selected = ","),
-      
-      radioButtons("quote", "Quote",
-                   choices = c(None = "",
-                               "Double Quote" = '"',
-                               "Single Quote" = "'"),
-                   selected = '"'),
-      
-      # Input: Select number of rows to display ----
-      radioButtons("disp", "Display",
-                   choices = c(Head = "head",
-                               All = "all"),
-                   selected = "head"),
-      
-      tags$hr(),
-      
-      
-      p("Numeric Guesses for Nonlinear Function Solution"),
-      
-      # Split layout allows all the numeric inputs on one row    
-      splitLayout(
-              #### Numeric inputs will be fed to python code to help solve nonlinear functions
-              numericInput("num1", " ", 0),
-              numericInput("num2", " ", 0),
-              numericInput("num3", " ", 0)
-      ),
-      
-      selectInput('xcol', 'X Variable', ""),
-      selectInput('ycol', 'Y Variable', "", selected = ""),
-      
-      actionButton("go", "Plot",)
+ui <- shinyUI(fluidPage(
+  titlePanel("Column Plot"),
+  tabsetPanel(
+    tabPanel("Upload File",
+             titlePanel("Uploading Files"),
+             sidebarLayout(
+               sidebarPanel(
+                 fileInput('file1', 'Choose CSV File',
+                           accept=c('text/csv', 
+                                    'text/comma-separated-values,text/plain', 
+                                    '.csv')),
+                 
+                 # added interface for uploading data from
+                 # http://shiny.rstudio.com/gallery/file-upload.html
+                 tags$br(),
+                 checkboxInput('header', 'Header', TRUE),
+                 radioButtons('sep', 'Separator',
+                              c(Comma=',',
+                                Semicolon=';',
+                                Tab='\t'),
+                              ','),
+                 radioButtons('quote', 'Quote',
+                              c(None='',
+                                'Double Quote'='"',
+                                'Single Quote'="'"),
+                              '"')
+                 
+               ),
+               mainPanel(
+                 tableOutput('contents')
+               )
+             )
     ),
-    
-    mainPanel(
-      tabsetPanel(type = "tabs",
-                  tabPanel("Data", tableOutput("contents")),
-                  tabPanel("Plot", plotOutput("df_plot"))
-      )
+    tabPanel("First Type",
+             pageWithSidebar(
+               headerPanel('My First Plot'),
+               sidebarPanel(
+                 
+                 # "Empty inputs" - they will be updated after the data is uploaded
+                 selectInput('xcol', 'X Variable', ""),
+                 selectInput('ycol', 'Y Variable', "", selected = "")
+                 
+               ),
+               mainPanel(
+                 plotOutput('MyPlot')
+               )
+             )
     )
+    
   )
 )
+)
 
-server <- function(input, output) {
+server <- shinyServer(function(input, output, session) {
+  # added "session" because updateSelectInput requires it
+  
+  
+  data <- reactive({ 
+    req(input$file1) ## ?req #  require that the input is available
+    
+    inFile <- input$file1 
+    
+    # tested with a following dataset: write.csv(mtcars, "mtcars.csv")
+    # and                              write.csv(iris, "iris.csv")
+    df <- read.csv(inFile$datapath, header = input$header, sep = input$sep,
+                   quote = input$quote)
+    
+    
+    # Update inputs (you could create an observer with both updateSel...)
+    # You can also constraint your choices. If you wanted select only numeric
+    # variables you could set "choices = sapply(df, is.numeric)"
+    # It depends on what do you want to do later on.
+    
+    updateSelectInput(session, inputId = 'xcol', label = 'X Variable',
+                      choices = names(df), selected = names(df))
+    updateSelectInput(session, inputId = 'ycol', label = 'Y Variable',
+                      choices = names(df), selected = names(df)[2])
+    
+    return(df)
+  })
   
   output$contents <- renderTable({
-    
-    # input$file1 will be NULL initially. After the user selects
-    # and uploads a file, head of that data file by default,
-    # or all rows if selected, will be shown.
-    
-    req(input$file1)
-    
-    # when reading semicolon separated files,
-    # having a comma separator causes `read.csv` to error
-    tryCatch(
-      {
-        df <- read.csv(input$file1$datapath,
-                       header = input$header,
-                       sep = input$sep,
-                       quote = input$quote)
-      },
-      error = function(e) {
-        # return a safeError if a parsing error occurs
-        stop(safeError(e))
-      }
-    )
-    
-    if(input$disp == "head") {
-      return(head(df))
-    }
-    else {
-      return(df)
-    }
-    
+    data()
   })
   
-  names <- reactive({
-    variable.names(df)
-  })
-  
-  p_df <- eventReactive(input$go, {
-    ggplot(df(), aes_string(x = "time", y = "cells")) + 
-      geom_line() +
-      geom_point()
+  output$MyPlot <- renderPlot({
+    # for a histogram: remove the second variable (it has to be numeric as well):
+    # x    <- data()[, c(input$xcol, input$ycol)]
+    # bins <- nrow(data())
+    # hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    
+    # Correct way:
+    # x    <- data()[, input$xcol]
+    # bins <- nrow(data())
+    # hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    
+    
+    # I Since you have two inputs I decided to make a scatterplot
+    x <- data()[, c(input$xcol, input$ycol)]
+    plot(x)
     
   })
-  
-  output$df_plot <- renderPlot(
-    p_df()
-  )
-  
-}
+})
 
-shinyApp(ui = ui, server = server)
+shinyApp(ui, server)
