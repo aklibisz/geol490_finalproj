@@ -111,14 +111,13 @@ server <- shinyServer(function(input, output, session) {
   })
   
   p_df <- eventReactive(input$go, {
-    ggplot(data(), aes(x = input$xcol, y = input$ycol)) + 
-      geom_line() +
+    ggplot(data(), aes_string(x = input$xcol, y = input$ycol)) + 
       geom_point()
     
   })
   
   output$df_plot <- { renderPlot({
-    p_df
+    p_df()
   })
   }
 })  
