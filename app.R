@@ -58,6 +58,9 @@ ui <- fluidPage(
               numericInput("num3", " ", 0)
       ),
       
+      selectInput('xcol', 'X Variable', ""),
+      selectInput('ycol', 'Y Variable', "", selected = ""),
+      
       actionButton("go", "Plot",)
     ),
     
@@ -104,8 +107,12 @@ server <- function(input, output) {
     
   })
   
+  names <- reactive({
+    variable.names(df)
+  })
+  
   p_df <- eventReactive(input$go, {
-    ggplot(df(), aes_string(x = input$xvar, y = input$yvar)) + 
+    ggplot(df(), aes_string(x = "time", y = "cells")) + 
       geom_line() +
       geom_point()
     
