@@ -24,10 +24,10 @@ ui <- fluidPage(
                   ".csv")),
       
       # user inputs whether the file includes headers such as column names
-      checkboxInput("header", "Column headers?", TRUE),
+      checkboxInput("header", "Headers?", TRUE),
    
       # user inputs what character distinguishes data beginning and end
-      radioButtons("sep", "Row separator/delimiter?",
+      radioButtons("sep", "Separator",
                    choices = c(Comma = ",",
                                Semicolon = ";",
                                Tab = "\t"),
@@ -39,7 +39,14 @@ ui <- fluidPage(
                                "Single Quote" = "'"),
                    selected = '"'),
       
+      # Input: Select number of rows to display ----
+      radioButtons("disp", "Display",
+                   choices = c(Head = "head",
+                               All = "all"),
+                   selected = "head"),
+      
       tags$hr(),
+      
       
       p("Numeric Guesses for Nonlinear Function Solution"),
       
@@ -51,16 +58,7 @@ ui <- fluidPage(
               numericInput("num3", " ", 0)
       ),
       
-      tags$hr(),
-      
-      # Input: Select number of rows to display ----
-      radioButtons("disp", "Display",
-                   choices = c(Head = "head",
-                               All = "all"),
-                   selected = "head"),
-      
-      actionButton("go", " ",
-                   icon = icon("power-off"))
+      actionButton("go", "Plot",)
     ),
     
     mainPanel(
