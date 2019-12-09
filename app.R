@@ -1,13 +1,13 @@
-#### Geol 490 Fall 2019 Final Project
+### Geol 490 Fall 2019 Final Project
 # Adam Klibisz
-#### 12 December 2019
+### 12 December 2019
 
 # several parts of this code are heavily adapted from shiny.rstudio.com and stackoverflow
 
-#### https://shiny.rstudio.com/gallery/file-upload.html
+### https://shiny.rstudio.com/gallery/file-upload.html
 # showed me the needed user inputs to use read.csv properly and showed me the code for only displaying the head of a dataframe
 
-#### https://stackoverflow.com/questions/36949769/how-to-plot-uploaded-dataset-using-shiny/36955396
+### https://stackoverflow.com/questions/36949769/how-to-plot-uploaded-dataset-using-shiny/36955396
 # specifically big thanks to user Michal Majka for their answer
 # showed me how to properly reference the column names from a user-input file to actually get a plot
 # showed me the tabsetPanel style for the app because I was originally only able to tabset the main panels
