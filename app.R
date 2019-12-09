@@ -59,9 +59,13 @@ ui <- fluidPage(
                  selectInput('xcol', 'X Variable', ""),
                  selectInput('ycol', 'Y Variable', "", selected = ""),
                  
+                 actionButton("go", " ",
+                              icon = icon("power-off"),
+                              selected = " ")
+                 
                ),
                mainPanel(
-                 plotOutput('MyPlot')
+                 plotOutput("df_plot")
                )
              )
     )
@@ -106,23 +110,17 @@ server <- shinyServer(function(input, output, session) {
     data()
   })
   
-  output$MyPlot <- renderPlot({
-    # for a histogram: remove the second variable (it has to be numeric as well):
-    # x    <- data()[, c(input$xcol, input$ycol)]
-    # bins <- nrow(data())
-    # hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    
-    # Correct way:
-    # x    <- data()[, input$xcol]
-    # bins <- nrow(data())
-    # hist(x, breaks = bins, col = 'darkgray', border = 'white')
-    
-    
-    # I Since you have two inputs I decided to make a scatterplot
-    x <- data()[, c(input$xcol, input$ycol)]
-    plot(x)
+  p_df <- eventReactive(input$go, {
+    ggplot(data(), aes(x = input$xcol, y = input$ycol)) + 
+      geom_line() +
+      geom_point()
     
   })
-})
+  
+  output$df_plot <- { renderPlot({
+    p_df
+  })
+  }
+})  
 
 shinyApp(ui, server)
