@@ -1,14 +1,17 @@
 library(shiny)
 library(datasets)
 
-ui <- shinyUI(fluidPage(
-  titlePanel("Column Plot"),
+ui <- fluidPage(
+  
+  titlePanel("Microbial Decay Analysis"),
+  
   tabsetPanel(
-    tabPanel("Upload File",
-             titlePanel("Uploading Files"),
+    tabPanel("Data",
+      
              sidebarLayout(
                sidebarPanel(
                  fileInput('file1', 'Choose CSV File',
+                           multiple = FALSE,
                            accept=c('text/csv', 
                                     'text/comma-separated-values,text/plain', 
                                     '.csv')),
@@ -34,9 +37,9 @@ ui <- shinyUI(fluidPage(
                )
              )
     ),
-    tabPanel("First Type",
+    tabPanel("Plot",
              pageWithSidebar(
-               headerPanel('My First Plot'),
+               headerPanel(' '),
                sidebarPanel(
                  
                  # "Empty inputs" - they will be updated after the data is uploaded
@@ -51,7 +54,6 @@ ui <- shinyUI(fluidPage(
     )
     
   )
-)
 )
 
 server <- shinyServer(function(input, output, session) {
