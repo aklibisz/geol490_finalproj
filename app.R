@@ -64,7 +64,7 @@ ui <- fluidPage(
     mainPanel(
       tabsetPanel(type = "tabs",
                   tabPanel("Data", tableOutput("contents")),
-                  tabPanel("Plot", plotOutput(" "))
+                  tabPanel("Plot", plotOutput("df_plot"))
       )
     )
   )
@@ -103,6 +103,17 @@ server <- function(input, output) {
     }
     
   })
+  
+  p_df <- eventReactive(input$go, {
+    ggplot(df(), aes_string(x = input$xvar, y = input$yvar)) + 
+      geom_line() +
+      geom_point()
+    
+  })
+  
+  output$df_plot <- renderPlot(
+    p_df()
+  )
   
 }
 
